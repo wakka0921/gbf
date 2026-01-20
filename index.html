@@ -6,9 +6,8 @@
     <title>古戦場効率シミュレーター</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 p-4">
-    <div id="app" class="max-w-md mx-auto bg-white p-6 rounded-xl shadow-md">
-        <h1 class="text-xl font-bold mb-2 text-center border-b pb-2">古戦場効率計算機</h1>
+<body class="bg-gray-100 p-4 pb-12"> <div id="app" class="max-w-md mx-auto bg-white p-6 rounded-xl shadow-md">
+        <h1 class="text-xl font-bold mb-2 text-center border-b pb-2">古戦場貢献度効率計算機</h1>
         
         <div class="flex items-center justify-center mb-6 py-2 bg-gray-50 rounded-lg border border-dashed border-gray-300">
             <input type="checkbox" id="highEarner" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
@@ -57,13 +56,13 @@
 
             <div class="grid grid-cols-1 gap-4" id="timeInputContainer">
                 <div class="p-3 bg-blue-50 rounded-lg border border-blue-100">
-                    <label id="mainTimeLabel" class="block text-sm font-bold text-blue-700">250HELLのタイム (例: 330→3分30秒、010→10秒)</label>
+                    <label id="mainTimeLabel" class="block text-sm font-bold text-blue-700">250HELLのタイム (例: 330→3分30秒)</label>
                     <input type="text" id="timeInput" value="1000" class="w-full mt-1 p-2 border rounded-md text-xl text-center font-black tracking-widest">
                     <div id="timeInterpret" class="text-right text-xs text-blue-600 font-bold mt-1">タイム: 10分 00秒</div>
                 </div>
 
                 <div id="compare200Container" class="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <label class="block text-sm font-bold text-gray-600">比較用: 200HELLのタイム</label>
+                    <label class="block text-sm font-bold text-gray-600">比較用: 200HELLのタイム </label>
                     <input type="text" id="timeInput200" value="300" class="w-full mt-1 p-2 border rounded-md text-xl text-center font-black tracking-widest bg-white">
                     <div id="timeInterpret200" class="text-right text-xs text-gray-500 font-bold mt-1">タイム: 3分 00秒</div>
                 </div>
@@ -110,6 +109,10 @@
         </div>
     </div>
 
+    <footer class="mt-8 text-center text-gray-400 text-[10px]">
+        <p>&copy; 2026 wakka All Rights Reserved.</p>
+    </footer>
+
     <script>
         const masterData = [
             { level: 90, contribution: 305000 },
@@ -153,9 +156,8 @@
             const idx = parseInt(document.getElementById('levelSelect').value);
             const current = masterData[idx];
             document.getElementById('selectedCont').innerText = current.contribution.toLocaleString();
-            document.getElementById('mainTimeLabel').innerText = `${current.level}HELLのタイム (例: 330)`;
+            document.getElementById('mainTimeLabel').innerText = `${current.level}HELLのタイム (例: 330→3分30秒、010→10秒)`;
 
-            // メインタイム計算
             const totalSec = parseInputToSec(document.getElementById('timeInput').value);
             if (totalSec === null) {
                 document.getElementById('timeInterpret').innerText = "入力エラー";
@@ -166,7 +168,6 @@
             const hourly = Math.floor(3600 / totalSec) * current.contribution;
             document.getElementById('currentHourly').innerHTML = `${hourly.toLocaleString()} <span class="text-xs font-bold">/時</span>`;
 
-            // 250HELL比較ロジック
             const compareBox = document.getElementById('compare200Container');
             const alertBox = document.getElementById('alert250');
             
@@ -178,15 +179,12 @@
                     document.getElementById('timeInterpret200').innerText = `タイム: ${Math.floor(sec200/60)}分 ${sec200%60}秒`;
                     const data200 = masterData.find(d => d.level === 200);
                     const hourly200 = Math.floor(3600 / sec200) * data200.contribution;
-                    
-                    // 250貢献度は200の3.75倍 (75M / 20M)
                     const limitSec = Math.floor(sec200 * 3.75);
                     
                     document.getElementById('hourly250Result').innerText = hourly.toLocaleString();
                     document.getElementById('hourly200Result').innerText = hourly200.toLocaleString();
                     document.getElementById('target250Time').innerText = `${Math.floor(limitSec/60)}分 ${limitSec%60}秒`;
 
-                    // 時速または倍率で比較
                     if (hourly < hourly200 || totalSec > limitSec) {
                         alertBox.classList.remove('hidden');
                     } else {
@@ -205,12 +203,10 @@
 
         document.getElementById('highEarner').addEventListener('change', calculate);
         document.querySelectorAll('input, select').forEach(el => {
-            el.addEventListener('input', calculate); // inputイベントに変更してリアルタイム性を向上
+            el.addEventListener('input', calculate);
         });
 
         calculate();
     </script>
 </body>
-
 </html>
-
