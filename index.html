@@ -6,12 +6,13 @@
     <title>古戦場効率シミュレーター</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 p-4 pb-12"> <div id="app" class="max-w-md mx-auto bg-white p-6 rounded-xl shadow-md">
+<body class="bg-gray-100 p-4 pb-12">
+    <div id="app" class="max-w-md mx-auto bg-white p-6 rounded-xl shadow-md">
         <h1 class="text-xl font-bold mb-2 text-center border-b pb-2">古戦場貢献度効率計算機</h1>
         
         <div class="flex items-center justify-center mb-6 py-2 bg-gray-50 rounded-lg border border-dashed border-gray-300">
             <input type="checkbox" id="highEarner" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
-            <label for="highEarner" class="ml-2 text-sm font-bold text-gray-700 cursor-pointer">貢献度稼げる方はこちら</label>
+            <label for="highEarner" class="ml-2 text-sm font-bold text-gray-700 cursor-pointer">貢献度稼げる方はこちら（ワンクリック一億単位になります）</label>
         </div>
 
         <div class="space-y-4">
@@ -29,7 +30,6 @@
             <div class="p-3 bg-gray-50 rounded border text-center">
                 <p class="text-xs text-gray-500 font-bold">目標まであと</p>
                 <p id="remainingGap" class="text-xl font-black text-gray-800">0</p>
-                <p class="text-[10px] text-gray-400">（目標累計 - 現在累計）</p>
             </div>
 
             <hr>
@@ -54,55 +54,48 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 gap-4" id="timeInputContainer">
-                <div class="p-3 bg-blue-50 rounded-lg border border-blue-100">
-                    <label id="mainTimeLabel" class="block text-sm font-bold text-blue-700">250HELLのタイム (例: 330→3分30秒)</label>
-                    <input type="text" id="timeInput" value="1000" class="w-full mt-1 p-2 border rounded-md text-xl text-center font-black tracking-widest">
-                    <div id="timeInterpret" class="text-right text-xs text-blue-600 font-bold mt-1">タイム: 10分 00秒</div>
-                </div>
-
-                <div id="compare200Container" class="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <label class="block text-sm font-bold text-gray-600">比較用: 200HELLのタイム </label>
-                    <input type="text" id="timeInput200" value="300" class="w-full mt-1 p-2 border rounded-md text-xl text-center font-black tracking-widest bg-white">
-                    <div id="timeInterpret200" class="text-right text-xs text-gray-500 font-bold mt-1">タイム: 3分 00秒</div>
-                </div>
+            <div class="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                <label id="mainTimeLabel" class="block text-sm font-bold text-blue-700 mb-1"></label>
+                <input type="text" id="timeInput" value="1000" class="w-full p-2 border rounded-md text-xl text-center font-black tracking-widest">
+                <div id="timeInterpret" class="text-right text-xs text-blue-600 font-bold mt-1"></div>
             </div>
-        </div>
 
-        <div id="alert250" class="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg hidden">
-            <div class="flex items-center text-red-700 mb-2">
-                <span class="font-bold">⚠️ その周り方、効率悪いよ！</span>
-            </div>
-            <div class="grid grid-cols-2 gap-2 text-center text-sm mb-2">
-                <div class="p-2 bg-white rounded border border-red-100">
-                    <p class="text-[10px] text-gray-400 font-bold">250HELL時速</p>
-                    <p id="hourly250Result" class="font-bold text-red-600">-</p>
-                </div>
-                <div class="p-2 bg-white rounded border border-gray-100">
-                    <p class="text-[10px] text-gray-400 font-bold">200HELL時速</p>
-                    <p id="hourly200Result" class="font-bold text-green-600">-</p>
-                </div>
-            </div>
-            <p class="text-[11px] text-red-600 leading-relaxed">
-                250HELLの時速が200HELLを下回っています。<br>
-                目標タイム: <span id="target250Time" class="font-bold"></span> 以内での討伐が必要です。
-            </p>
-        </div>
-
-        <div id="result" class="mt-6 space-y-4">
-            <div class="p-4 bg-blue-50 rounded-lg border border-blue-200 shadow-sm">
-                <div class="flex justify-between items-center mb-2">
-                    <p class="text-xs text-blue-600 font-bold uppercase underline">現在の時速</p>
-                    <p id="currentHourly" class="text-xl font-black text-blue-900">0 <span class="text-xs font-bold text-blue-600">/時</span></p>
-                </div>
-                <div class="space-y-1 text-sm pt-2 border-t border-blue-100 text-blue-800">
-                    <div class="flex justify-between">
-                        <span>目標までの必要周回:</span>
-                        <span class="font-bold"><span id="currentNeededRuns">0</span> 回</span>
+            <div id="compareContainer" class="hidden">
+                <div class="p-4 bg-orange-50 rounded-lg border border-orange-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <label id="compareLabel" class="text-sm font-bold text-orange-800"></label>
+                        <span id="effBadge" class="text-[10px] font-bold px-2 py-0.5 rounded border"></span>
                     </div>
-                    <div class="flex justify-between">
-                        <span>完了までの推定時間:</span>
-                        <span id="currentNeededTime" class="font-bold text-red-600">0</span>
+                    <div class="flex gap-2 items-center">
+                        <input type="text" id="compareTimeInput" value="300" class="w-2/3 p-2 border border-orange-200 rounded-md text-lg text-center font-bold tracking-widest bg-white">
+                        <div class="w-1/3 text-right">
+                            <p class="text-[10px] text-orange-400 font-bold uppercase">比較時速</p>
+                            <p id="compareHourly" class="font-bold text-orange-900 text-sm"></p>
+                        </div>
+                    </div>
+                    <div id="compareTimeInterpret" class="text-right text-[10px] text-orange-600 italic mt-1 font-medium"></div>
+                    
+                    <div class="mt-3 pt-3 border-t border-orange-100 text-[11px] text-orange-800">
+                        <p id="efficiencyAdvice"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="result" class="mt-6">
+            <div class="p-4 bg-gray-800 rounded-lg shadow-sm text-white">
+                <div class="flex justify-between items-center mb-2">
+                    <p class="text-xs text-gray-400 font-bold uppercase underline">選択難易度の時速</p>
+                    <p id="currentHourly" class="text-xl font-black">0 <span class="text-xs font-bold text-gray-400">/時</span></p>
+                </div>
+                <div class="space-y-1 text-sm pt-2 border-t border-gray-700">
+                    <div class="flex justify-between text-gray-300">
+                        <span>必要周回数:</span>
+                        <span class="font-bold text-white"><span id="currentNeededRuns">0</span> 回</span>
+                    </div>
+                    <div class="flex justify-between text-gray-300">
+                        <span>所要時間:</span>
+                        <span id="currentNeededTime" class="font-bold text-orange-400">0</span>
                     </div>
                 </div>
             </div>
@@ -124,7 +117,7 @@
         ];
 
         function formatTime(totalMinutes) {
-            if (totalMinutes <= 0) return "完了！";
+            if (totalMinutes <= 0) return "目標達成";
             const h = Math.floor(totalMinutes / 60);
             const m = Math.ceil(totalMinutes % 60);
             return h > 0 ? `${h}時間 ${m}分` : `${m}分`;
@@ -144,6 +137,7 @@
         }
 
         function calculate() {
+            // ステップ更新
             const isHighEarner = document.getElementById('highEarner').checked;
             document.getElementById('targetContribution').step = isHighEarner ? 100000000 : 10000000;
             document.getElementById('currentTotal').step = isHighEarner ? 100000000 : 10000000;
@@ -156,46 +150,52 @@
             const idx = parseInt(document.getElementById('levelSelect').value);
             const current = masterData[idx];
             document.getElementById('selectedCont').innerText = current.contribution.toLocaleString();
-            document.getElementById('mainTimeLabel').innerText = `${current.level}HELLのタイム (例: 330→3分30秒、010→10秒)`;
+            document.getElementById('mainTimeLabel').innerText = `${current.level}HELLのタイム (例: 330→3分30秒、10→10秒)`;
 
+            // メイン時速計算
             const totalSec = parseInputToSec(document.getElementById('timeInput').value);
             if (totalSec === null) {
                 document.getElementById('timeInterpret').innerText = "入力エラー";
                 return;
             }
             document.getElementById('timeInterpret').innerText = `タイム: ${Math.floor(totalSec/60)}分 ${totalSec%60}秒`;
-
             const hourly = Math.floor(3600 / totalSec) * current.contribution;
-            document.getElementById('currentHourly').innerHTML = `${hourly.toLocaleString()} <span class="text-xs font-bold">/時</span>`;
+            document.getElementById('currentHourly').innerHTML = `${hourly.toLocaleString()} <span class="text-xs font-bold text-gray-400">/時</span>`;
 
-            const compareBox = document.getElementById('compare200Container');
-            const alertBox = document.getElementById('alert250');
-            
-            if (current.level === 250) {
-                compareBox.classList.remove('hidden');
-                const sec200 = parseInputToSec(document.getElementById('timeInput200').value);
+            // 比較ロジック（一つ下の難易度がある場合のみ）
+            const compareContainer = document.getElementById('compareContainer');
+            if (idx > 0) {
+                compareContainer.classList.remove('hidden');
+                const prev = masterData[idx - 1];
+                document.getElementById('compareLabel').innerText = `比較用: ${prev.level}HELLのタイム`;
                 
-                if (sec200 !== null) {
-                    document.getElementById('timeInterpret200').innerText = `タイム: ${Math.floor(sec200/60)}分 ${sec200%60}秒`;
-                    const data200 = masterData.find(d => d.level === 200);
-                    const hourly200 = Math.floor(3600 / sec200) * data200.contribution;
-                    const limitSec = Math.floor(sec200 * 3.75);
+                const compSec = parseInputToSec(document.getElementById('compareTimeInput').value);
+                if (compSec !== null) {
+                    document.getElementById('compareTimeInterpret').innerText = `タイム: ${Math.floor(compSec/60)}分 ${compSec%60}秒`;
+                    const compHourly = Math.floor(3600 / compSec) * prev.contribution;
+                    document.getElementById('compareHourly').innerText = compHourly.toLocaleString();
                     
-                    document.getElementById('hourly250Result').innerText = hourly.toLocaleString();
-                    document.getElementById('hourly200Result').innerText = hourly200.toLocaleString();
-                    document.getElementById('target250Time').innerText = `${Math.floor(limitSec/60)}分 ${limitSec%60}秒`;
-
-                    if (hourly < hourly200 || totalSec > limitSec) {
-                        alertBox.classList.remove('hidden');
+                    const badge = document.getElementById('effBadge');
+                    if (hourly >= compHourly) {
+                        badge.innerText = `${current.level}の方が高効率`;
+                        badge.className = "text-[10px] font-bold px-2 py-0.5 rounded border bg-green-50 border-green-200 text-green-600";
                     } else {
-                        alertBox.classList.add('hidden');
+                        badge.innerText = `${prev.level}の方が高効率`;
+                        badge.className = "text-[10px] font-bold px-2 py-0.5 rounded border bg-red-50 border-red-200 text-red-600";
                     }
+
+                    // アドバイス（境界タイムの計算）
+                    // 貢献度の比率から、現在の難易度で許容される最大秒数を算出
+                    const ratio = current.contribution / prev.contribution;
+                    const limitSec = Math.floor(compSec * ratio);
+                    document.getElementById('efficiencyAdvice').innerHTML = 
+                        `${prev.level}HELLをそのタイムで回る場合、<br><b>${current.level}HELLを ${Math.floor(limitSec/60)}分${limitSec%60}秒 以内</b>で倒せれば効率的です。`;
                 }
             } else {
-                compareBox.classList.add('hidden');
-                alertBox.classList.add('hidden');
+                compareContainer.classList.add('hidden');
             }
 
+            // 必要周回
             const currentRuns = Math.ceil(remaining / current.contribution);
             document.getElementById('currentNeededRuns').innerText = currentRuns.toLocaleString();
             document.getElementById('currentNeededTime').innerText = formatTime((currentRuns * totalSec) / 60);
